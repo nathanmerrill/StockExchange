@@ -1,9 +1,9 @@
-package game.bots;
+package game;
 
-import game.*;
-import messaging.PipeCommunicator;
-import messaging.SerializedCommunicator;
-import messaging.serialization.ListSerializer;
+
+import KoTHComm.messaging.PipeCommunicator;
+import KoTHComm.messaging.SerializedCommunicator;
+import KoTHComm.messaging.serialization.ListSerializer;
 
 import java.util.List;
 
@@ -12,8 +12,8 @@ public class PipeBot extends Player{
     private final SerializedCommunicator<List<Offer>, Offer> acceptCommunicator;
     private final SerializedCommunicator<List<Stock>, Offer> makeCommunicator;
 
-    public PipeBot(String folderPath){
-        pipeCommunicator = new PipeCommunicator(folderPath);
+    public PipeBot(PipeCommunicator pipeCommunicator){
+        this.pipeCommunicator = pipeCommunicator;
         acceptCommunicator = new SerializedCommunicator<>(pipeCommunicator, new ListSerializer<>(new OfferSerializer()), new OfferSerializer());
         makeCommunicator = new SerializedCommunicator<>(pipeCommunicator, new ListSerializer<>(new StockSerializer()), new OfferSerializer());
     }

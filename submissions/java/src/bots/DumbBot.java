@@ -1,4 +1,4 @@
-package game.bots;
+package bots;
 
 import game.Offer;
 import game.Player;

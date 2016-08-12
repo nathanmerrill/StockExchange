@@ -1,8 +1,9 @@
 package game;
 
-import messaging.serialization.Serializer;
 
-public class StockSerializer implements Serializer<Stock>{
+import KoTHComm.messaging.serialization.Serializer;
+
+public class StockSerializer implements Serializer<Stock> {
     public final static String SEPARATOR = ":";
     @Override
     public Stock deserialize(String representation) {

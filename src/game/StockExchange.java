@@ -1,6 +1,8 @@
 package game;
 
-import utils.Pair;
+import KoTHComm.game.RepeatedGame;
+import KoTHComm.game.Scoreboard;
+import KoTHComm.utils.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;

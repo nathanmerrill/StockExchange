@@ -1,6 +1,8 @@
 package game;
 
-import utils.Tools;
+
+import KoTHComm.game.AbstractPlayer;
+import KoTHComm.utils.Tools;
 
 import java.util.List;
 

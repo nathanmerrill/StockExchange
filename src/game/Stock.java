@@ -1,6 +1,7 @@
 package game;
 
-import utils.Tools;
+
+import KoTHComm.utils.Tools;
 
 public final class Stock {
     private final int stockType, amount;
