@@ -1,6 +1,6 @@
-package game;
+package com.ppcg.stockexchange;
 
-import KoTHComm.messaging.serialization.Serializer;
+import com.ppcg.kothcomm.messaging.serialization.Serializer;
 
 public class OfferSerializer implements Serializer<Offer> {
     public final static String SEPARATOR = ",";

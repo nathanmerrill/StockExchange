@@ -1,8 +1,8 @@
-package game;
+package com.ppcg.stockexchange;
 
-import KoTHComm.game.RepeatedGame;
-import KoTHComm.game.Scoreboard;
-import KoTHComm.utils.Pair;
+import com.ppcg.kothcomm.game.RepeatedGame;
+import com.ppcg.kothcomm.game.Scoreboard;
+import com.ppcg.kothcomm.utils.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;

@@ -1,4 +1,4 @@
-package game;
+package com.ppcg.stockexchange;
 
 public final class Offer {
     private final Stock offer, payment;

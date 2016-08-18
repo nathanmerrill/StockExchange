@@ -1,8 +1,8 @@
-package game;
+package com.ppcg.stockexchange;
 
 
-import KoTHComm.game.AbstractPlayer;
-import KoTHComm.utils.Tools;
+import com.ppcg.kothcomm.game.AbstractPlayer;
+import com.ppcg.kothcomm.utils.Tools;
 
 import java.util.List;
 

@@ -1,7 +1,6 @@
-package game;
+package com.ppcg.stockexchange;
 
-
-import KoTHComm.utils.Tools;
+import com.ppcg.kothcomm.utils.Tools;
 
 public final class Stock {
     private final int stockType, amount;

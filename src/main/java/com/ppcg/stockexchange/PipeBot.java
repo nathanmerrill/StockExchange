@@ -1,9 +1,9 @@
-package game;
+package com.ppcg.stockexchange;
 
 
-import KoTHComm.messaging.PipeCommunicator;
-import KoTHComm.messaging.SerializedCommunicator;
-import KoTHComm.messaging.serialization.ListSerializer;
+import com.ppcg.kothcomm.messaging.PipeCommunicator;
+import com.ppcg.kothcomm.messaging.SerializedCommunicator;
+import com.ppcg.kothcomm.messaging.serialization.ListSerializer;
 
 import java.util.List;
 
