@@ -6,6 +6,7 @@ import com.ppcg.kothcomm.utils.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class StockExchange extends RepeatedGame<Player> {
     public static final int INITIAL_STOCK_QUANTITY = 1000;
@@ -28,7 +29,7 @@ public class StockExchange extends RepeatedGame<Player> {
     }
 
     private void initPrices(){
-        prices = random.doubles().limit(NUM_STOCKS).mapToObj(i->i).collect(Collectors.toList());
+        prices = Stream.generate(() -> Math.pow(random.nextDouble(), 2)).limit(NUM_STOCKS).collect(Collectors.toList());
     }
 
     private void initStockMarket(){
