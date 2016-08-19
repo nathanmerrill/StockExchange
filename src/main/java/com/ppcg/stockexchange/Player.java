@@ -7,10 +7,12 @@ import com.ppcg.kothcomm.utils.Tools;
 import java.util.List;
 
 public abstract class Player extends AbstractPlayer<Player> {
-    protected List<Stock> ownedStock;
+    protected List<Stock> currentStock;
+    protected int secretStockType;
+    protected double secretStockPrice;
     /**
      * @param offers All available offers
-     * @return A map containing the quantity of offers you would like to take
+     * @return An offer you want to accept, or null if you want to accept neither.
      */
     public abstract Offer acceptOffer(List<Offer> offers);
 
@@ -19,24 +21,34 @@ public abstract class Player extends AbstractPlayer<Player> {
      * If you return null, no offer will be given.
      * @return The offer you would like to make this round
      */
-    public abstract Offer makeOffer();
+    public abstract Offer makeOffer(List<Stock> currentStock);
+
+    /**
+     * Shows you all of the accepted offers
+     */
+    public void acceptedOffers(List<Offer> acceptedOffers){
+
+    }
 
     /**
      * Informs you of the real value of a single stock.  Only called once at the beginning of the game
-     * @param stock The stock number
+     * @param stockType The stock number
      * @param price The cash-out price of the indicated stock
      */
-    public abstract void stockValue(int stock, double price);
-
-    public final void setOwnedStock(List<Stock> stock){
-        ownedStock = stock;
+    public void secretValue(int stockType, double price){
+        this.secretStockType = stockType;
+        this.secretStockPrice = price;
     }
 
-    protected int getOwnedStock(int stockType){
-        return ownedStock.get(stockType).getAmount();
+    public final void setCurrentStock(List<Stock> stock){
+        currentStock = stock;
+    }
+
+    protected int getCurrentStock(int stockType){
+        return currentStock.get(stockType).getAmount();
     }
 
     public Stock randomStock(){
-        return Tools.sample(ownedStock, getRandom());
+        return Tools.sample(currentStock, getRandom());
     }
 }

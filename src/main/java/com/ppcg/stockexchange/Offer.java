@@ -16,4 +16,23 @@ public final class Offer {
         return payment;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Offer offer1 = (Offer) o;
+
+        if (!offer.equals(offer1.offer)) return false;
+        if (!payment.equals(offer1.payment)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = offer.hashCode();
+        result = 31 * result + payment.hashCode();
+        return result;
+    }
 }

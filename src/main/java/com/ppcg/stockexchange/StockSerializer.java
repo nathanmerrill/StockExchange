@@ -8,10 +8,10 @@ public class StockSerializer implements Serializer<Stock> {
     @Override
     public Stock deserialize(String representation) {
         try {
-            String[] parts = representation.split(SEPARATOR);
+            String[] parts = representation.trim().split(SEPARATOR);
             return new Stock(Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
         } catch (NumberFormatException|ArrayIndexOutOfBoundsException e){
-            throw new RuntimeException("Expected input in format 'Integer:Integerr', but got "+representation);
+            throw new RuntimeException("Expected input in format 'Integer:Integer', but got '"+representation+"'");
         }
     }
 

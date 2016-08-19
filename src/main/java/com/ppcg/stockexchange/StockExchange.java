@@ -42,7 +42,7 @@ public class StockExchange extends RepeatedGame<Player> {
 
     private void givePlayersPrivateInfo(){
         for (int i = 0; i < NUM_STOCKS; i++){
-            players.get(i).stockValue(i, prices.get(i));
+            players.get(i).secretValue(i, prices.get(i));
         }
     }
 
@@ -62,12 +62,13 @@ public class StockExchange extends RepeatedGame<Player> {
     }
 
     private void updatePlayersStocks(){
-        players.forEach(player -> player.setOwnedStock(new ArrayList<>(stockMarket.get(player))));
+        players.forEach(player -> player.setCurrentStock(new ArrayList<>(stockMarket.get(player))));
     }
 
     private List<Pair<Player, Offer>> getPlayerOffers(){
         return players.stream()
-                .map(Pair.fromValue(Player::makeOffer))
+                .map(Pair.fromValue(p -> p.makeOffer(new ArrayList<>(stockMarket.get(p)))))
+                .filter(p -> p.second() != null)
                 .filter(p -> canPay(p.first(), p.second().getOffer()))
                 .collect(Collectors.toList());
     }
@@ -100,6 +101,7 @@ public class StockExchange extends RepeatedGame<Player> {
     protected void nextStep() {
         updatePlayersStocks();
         List<Pair<Player, Offer>> currentOffers = getPlayerOffers();
+        List<Offer> acceptedOffers = new ArrayList<>();
 
         for (Player player: players){
             List<Pair<Player, Offer>> availableOffers = getAvailableOffersFor(player, currentOffers);
@@ -107,9 +109,15 @@ public class StockExchange extends RepeatedGame<Player> {
             if (accepted == null){
                 continue;
             }
+            acceptedOffers.add(accepted.second());
             currentOffers.remove(accepted);
             exchange(accepted.second(), accepted.first(), player);
         }
+        informAccepted(acceptedOffers);
+    }
+
+    private void informAccepted(List<Offer> accepted){
+        players.forEach(player -> player.acceptedOffers(new ArrayList<>(accepted)));
     }
 
     private void exchange(Offer offer, Player offerer, Player accepter){

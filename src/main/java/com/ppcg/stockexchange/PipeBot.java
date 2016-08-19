@@ -4,18 +4,35 @@ package com.ppcg.stockexchange;
 import com.ppcg.kothcomm.messaging.PipeCommunicator;
 import com.ppcg.kothcomm.messaging.SerializedCommunicator;
 import com.ppcg.kothcomm.messaging.serialization.ListSerializer;
+import com.ppcg.kothcomm.messaging.serialization.OptionalSerializer;
+import com.ppcg.kothcomm.messaging.serialization.VoidSerializer;
 
 import java.util.List;
+import java.util.Random;
 
 public class PipeBot extends Player{
     private final PipeCommunicator pipeCommunicator;
     private final SerializedCommunicator<List<Offer>, Offer> acceptCommunicator;
     private final SerializedCommunicator<List<Stock>, Offer> makeCommunicator;
+    private final SerializedCommunicator<List<Offer>, ?> acceptedCommunicator;
 
     public PipeBot(PipeCommunicator pipeCommunicator){
         this.pipeCommunicator = pipeCommunicator;
-        acceptCommunicator = new SerializedCommunicator<>(pipeCommunicator, new ListSerializer<>(new OfferSerializer()), new OfferSerializer());
-        makeCommunicator = new SerializedCommunicator<>(pipeCommunicator, new ListSerializer<>(new StockSerializer()), new OfferSerializer());
+        acceptCommunicator = new SerializedCommunicator<>(pipeCommunicator,
+                new ListSerializer<>(new OfferSerializer()),
+                new OptionalSerializer<>(new OfferSerializer()));
+        makeCommunicator = new SerializedCommunicator<>(pipeCommunicator,
+                new ListSerializer<>(new StockSerializer()),
+                new OptionalSerializer<>(new OfferSerializer()));
+        acceptedCommunicator = new SerializedCommunicator<>(pipeCommunicator,
+                new ListSerializer<>(new OfferSerializer()),
+                new VoidSerializer());
+    }
+
+    @Override
+    public void setRandom(Random random) {
+        super.setRandom(random);
+        pipeCommunicator.sendMessage(random.nextInt()+"", "RandomSeed");
     }
 
     @Override
@@ -24,12 +41,20 @@ public class PipeBot extends Player{
     }
 
     @Override
-    public void stockValue(int stock, double price) {
-        pipeCommunicator.sendMessage(stock+":"+price, "StockValue");
+    public void acceptedOffers(List<Offer> acceptedOffers) {
+        super.acceptedOffers(acceptedOffers);
+        acceptedCommunicator.sendMessage(acceptedOffers, "AcceptedOffers");
     }
 
     @Override
-    public Offer makeOffer() {
-        return makeCommunicator.sendMessage(this.ownedStock, "MakeOffer");
+    public void secretValue(int stock, double price) {
+        super.secretValue(stock, price);
+        pipeCommunicator.sendMessage(stock+":"+price, "SecretValue");
     }
+
+    @Override
+    public Offer makeOffer(List<Stock> currentStock) {
+        return makeCommunicator.sendMessage(currentStock, "MakeOffer");
+    }
+
 }
