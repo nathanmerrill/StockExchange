@@ -1,9 +1,9 @@
 package com.ppcg.stockexchange;
 
 public final class Offer {
-    private final Stock offer, payment;
-    public Offer(Stock offer, Stock payment){
-        assert(offer.getType() != payment.getType());
+    private final Stock offer;
+    private final int payment;
+    public Offer(Stock offer, int payment){
         this.offer = offer;
         this.payment = payment;
     }
@@ -12,7 +12,7 @@ public final class Offer {
         return offer;
     }
 
-    public Stock getPayment() {
+    public int getPayment() {
         return payment;
     }
 
@@ -24,7 +24,7 @@ public final class Offer {
         Offer offer1 = (Offer) o;
 
         if (!offer.equals(offer1.offer)) return false;
-        if (!payment.equals(offer1.payment)) return false;
+        if (payment != offer1.payment) return false;
 
         return true;
     }
@@ -32,7 +32,7 @@ public final class Offer {
     @Override
     public int hashCode() {
         int result = offer.hashCode();
-        result = 31 * result + payment.hashCode();
+        result = 31 * result + Integer.hashCode(payment);
         return result;
     }
 }

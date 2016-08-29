@@ -1,11 +1,10 @@
 package com.ppcg.stockexchange;
 
-import com.ppcg.kothcomm.utils.Tools;
 
 public final class Stock {
     private final int stockType, amount;
     public Stock(int stockType, int amount){
-        assert(Tools.inRange(stockType, 0, StockExchange.NUM_STOCKS));
+        assert(stockType >= 0);
         assert(amount > 0);
         this.stockType = stockType;
         this.amount = amount;

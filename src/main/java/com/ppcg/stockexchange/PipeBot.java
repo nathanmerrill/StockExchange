@@ -47,7 +47,7 @@ public class PipeBot extends Player{
     }
 
     @Override
-    public void secretValue(int stock, double price) {
+    public void secretValue(int stock, int price) {
         super.secretValue(stock, price);
         pipeCommunicator.sendMessage(stock+":"+price, "SecretValue");
     }

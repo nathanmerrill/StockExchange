@@ -9,7 +9,7 @@ import java.util.List;
 public abstract class Player extends AbstractPlayer<Player> {
     protected List<Stock> currentStock;
     protected int secretStockType;
-    protected double secretStockPrice;
+    protected int secretStockValue;
     /**
      * @param offers All available offers
      * @return An offer you want to accept, or null if you want to accept neither.
@@ -33,11 +33,11 @@ public abstract class Player extends AbstractPlayer<Player> {
     /**
      * Informs you of the real value of a single stock.  Only called once at the beginning of the game
      * @param stockType The stock number
-     * @param price The cash-out price of the indicated stock
+     * @param value The cash-out price of the indicated stock
      */
-    public void secretValue(int stockType, double price){
+    public void secretValue(int stockType, int value){
         this.secretStockType = stockType;
-        this.secretStockPrice = price;
+        this.secretStockValue = value;
     }
 
     public final void setCurrentStock(List<Stock> stock){

@@ -1,21 +1,24 @@
 package com.ppcg.stockexchange;
 
 import com.ppcg.kothcomm.game.RepeatedGame;
-import com.ppcg.kothcomm.game.Scoreboard;
+import com.ppcg.kothcomm.game.scoreboards.AggregateScoreboard;
 import com.ppcg.kothcomm.utils.Pair;
 
 import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class StockExchange extends RepeatedGame<Player> {
     public static final int INITIAL_STOCK_QUANTITY = 1000;
+    public static final int MAX_STOCK_VALUE = 1000;
     public static final int NUM_EXCHANGES = 1000;
-    public static final int NUM_STOCKS = 5;
 
-    private List<Double> prices;
+    private List<Integer> prices;
 
-    private HashMap<Player, List<Stock>> stockMarket;
+    private Map<Player, List<Stock>> stockMarket;
+    private Map<Player, Integer> networth;
+    private int numStocks;
 
     public StockExchange(){
         super(NUM_EXCHANGES);
@@ -23,39 +26,44 @@ public class StockExchange extends RepeatedGame<Player> {
 
     @Override
     public void setup() {
+        numStocks = players.size();
         initPrices();
         initStockMarket();
         givePlayersPrivateInfo();
     }
 
     private void initPrices(){
-        prices = Stream.generate(() -> Math.pow(random.nextDouble(), 2)).limit(NUM_STOCKS).collect(Collectors.toList());
+        prices = Stream.generate(() ->
+                (int) Math.ceil(Math.pow(random.nextDouble(), 2)*1000))
+                .limit(numStocks).collect(Collectors.toList());
     }
 
     private void initStockMarket(){
         stockMarket = new HashMap<>();
         List<Stock> initialStock = new ArrayList<>();
-        for (int i = 0; i< NUM_STOCKS; i++){
+        for (int i = 0; i< numStocks; i++){
             initialStock.add(new Stock(i, INITIAL_STOCK_QUANTITY));
         }
         players.forEach(p -> stockMarket.put(p, new ArrayList<>(initialStock)));
+        networth = players.stream().collect(Collectors.toMap(Function.identity(), p -> 0));
     }
 
     private void givePlayersPrivateInfo(){
-        for (int i = 0; i < NUM_STOCKS; i++){
+        for (int i = 0; i < numStocks; i++){
             players.get(i).secretValue(i, prices.get(i));
         }
     }
 
     @Override
-    public Scoreboard<Player> getScores() {
-        Scoreboard<Player> scoreboard = new Scoreboard<>();
+    public AggregateScoreboard<Player> getScores() {
+        AggregateScoreboard<Player> scoreboard = new AggregateScoreboard<>();
         players.forEach(p -> scoreboard.addScore(p, getNetWorth(p)));
         return scoreboard;
     }
 
     private double getNetWorth(Player player){
-        return stockMarket.get(player).stream().mapToDouble(this::stockValue).sum();
+        return stockMarket.get(player).stream().mapToDouble(this::stockValue).sum()
+                + networth.get(player);
     }
 
     private double stockValue(Stock stock){
@@ -71,12 +79,6 @@ public class StockExchange extends RepeatedGame<Player> {
                 .map(Pair.fromValue(p -> p.makeOffer(new ArrayList<>(stockMarket.get(p)))))
                 .filter(p -> p.second() != null)
                 .filter(p -> canPay(p.first(), p.second().getOffer()))
-                .collect(Collectors.toList());
-    }
-
-    private List<Pair<Player, Offer>> getAvailableOffersFor(Player player, List<Pair<Player, Offer>> currentOffers){
-        return currentOffers.stream()
-                .filter(i -> canPay(player, i.second().getPayment()))
                 .collect(Collectors.toList());
     }
 
@@ -105,8 +107,7 @@ public class StockExchange extends RepeatedGame<Player> {
         List<Offer> acceptedOffers = new ArrayList<>();
 
         for (Player player: players){
-            List<Pair<Player, Offer>> availableOffers = getAvailableOffersFor(player, currentOffers);
-            Pair<Player, Offer> accepted = giveOffers(player, availableOffers);
+            Pair<Player, Offer> accepted = giveOffers(player, new ArrayList<>(currentOffers));
             if (accepted == null){
                 continue;
             }
@@ -122,26 +123,18 @@ public class StockExchange extends RepeatedGame<Player> {
     }
 
     private void exchange(Offer offer, Player offerer, Player accepter){
-        if (!canPay(offerer, offer.getOffer()) || !canPay(accepter, offer.getPayment())){
+        if (!canPay(offerer, offer.getOffer())){
             return;
         }
-        removeStock(accepter, offer.getPayment());
-        addStock(offerer, offer.getPayment());
+        int stockType = offer.getOffer().getType();
 
-        removeStock(offerer, offer.getOffer());
-        addStock(accepter, offer.getOffer());
-    }
+        List<Stock> accepterStock = stockMarket.get(accepter);
+        accepterStock.set(stockType, accepterStock.get(stockType).plus(offer.getOffer()));
+        networth.put(accepter, networth.get(accepter)-offer.getPayment());
 
-    private void addStock(Player player, Stock stock){
-        List<Stock> playerMarket = stockMarket.get(player);
-        int stockType = stock.getType();
-        playerMarket.set(stockType, playerMarket.get(stockType).plus(stock));
-    }
-
-    private void removeStock(Player player, Stock stock){
-        List<Stock> playerMarket = stockMarket.get(player);
-        int stockType = stock.getType();
-        playerMarket.set(stockType, playerMarket.get(stockType).minus(stock));
+        List<Stock> offererStock = stockMarket.get(offerer);
+        offererStock.set(stockType, accepterStock.get(stockType).minus(offer.getOffer()));
+        networth.put(offerer, networth.get(offerer)+offer.getPayment());
     }
 
 }

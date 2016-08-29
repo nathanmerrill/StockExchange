@@ -2,18 +2,23 @@ import random
 from functools import total_ordering
 
 
+LIST_DELIMITER = ';'
+STOCK_DELIMITER = ':'
+OFFER_DELIMITER = '@'
+
+
 @total_ordering
 class Stock:
     @staticmethod
     def parse(string: str):
-        return Stock(*map(int, string.split(":")))
+        return Stock(*map(int, string.split(STOCK_DELIMITER)))
 
     def __init__(self, stock_type: int, amount: int):
         self.type = stock_type
         self.amount = max(amount, 0)
 
     def __str__(self):
-        return str(self.type)+":"+str(self.amount)
+        return str(self.type)+STOCK_DELIMITER+str(self.amount)
 
     def __eq__(self, other):
         return self.amount == other.type
@@ -40,19 +45,20 @@ class Stock:
 class Offer:
     @staticmethod
     def parse(string: str) -> 'Offer':
-        return Offer(*map(Stock.parse, string.split(",")))
+        offer, payment = string.split(OFFER_DELIMITER)
+        return Offer(Stock.parse(offer), int(payment.strip()))
 
-    def __init__(self, offer: Stock, payment: Stock):
+    def __init__(self, offer: Stock, payment: int):
         self.offer = offer
         self.payment = payment
 
     def __str__(self):
-        return str(self.offer)+","+str(self.payment)
+        return str(self.offer)+OFFER_DELIMITER+str(self.payment)
 
 
 def read_stock_value(value: str):
     global hidden_price, hidden_stock
-    stock, price = value.split(":")
+    stock, price = value.split(STOCK_DELIMITER)
     hidden_price = float(price)
     hidden_stock = int(stock)
 
@@ -88,17 +94,17 @@ hidden_price = None
 
 
 def make_offer(current_stock: str):
-    current_stock = map(Stock.parse, current_stock.split(";"))
+    current_stock = map(Stock.parse, current_stock.split(LIST_DELIMITER))
     pass
 
 
 def accept_offer(available_offers: str):
-    available_offers = map(Offer.parse, available_offers.split(";"))
-    pass
+    available_offers = list(map(Offer.parse, available_offers.split(LIST_DELIMITER)))
+    return random.sample(available_offers, 1)[0]
 
 
 def accepted_offers(offers: str):
-    offers = map(Offer.parse, offers.split(";"))
+    offers = map(Offer.parse, offers.split(LIST_DELIMITER))
     pass
 
 
