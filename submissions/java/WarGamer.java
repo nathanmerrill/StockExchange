@@ -1,5 +1,9 @@
 import java.util.List;
 import com.ppcg.stockexchange.*;
+import com.ppcg.kothcomm.game.AbstractPlayer;
+import com.ppcg.kothcomm.utils.Tools;
+
+import java.util.List;
 
 public class WarGamer extends Player {
 static final boolean FRAUD = false;
@@ -14,7 +18,7 @@ static final boolean FRAUD = false;
     public Offer makeOffer(List<Stock> currentStock){
     if(FRAUD)
     return new Offer(new Stock(0,1),Integer.MAX_VALUE);
-        //defraud shut up and take my money
+        //defraud shut up and take my money            
     return null;
     }
 }
