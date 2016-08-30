@@ -1,3 +1,4 @@
+
 import random
 from functools import total_ordering
 
@@ -45,7 +46,10 @@ class Stock:
 class Offer:
     @staticmethod
     def parse(string: str) -> 'Offer':
-        offer, payment = string.split(OFFER_DELIMITER)
+        try:
+            offer, payment = string.split(OFFER_DELIMITER)
+        except ValueError:
+            raise Exception("Cannot unpack "+string)
         return Offer(Stock.parse(offer), int(payment.strip()))
 
     def __init__(self, offer: Stock, payment: int):

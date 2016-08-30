@@ -17,7 +17,7 @@ public class StockExchange extends RepeatedGame<Player> {
     private List<Integer> prices;
 
     private Map<Player, List<Stock>> stockMarket;
-    private Map<Player, Integer> networth;
+    private Map<Player, Long> networth;
     private int numStocks;
 
     public StockExchange(){
@@ -45,7 +45,7 @@ public class StockExchange extends RepeatedGame<Player> {
             initialStock.add(new Stock(i, INITIAL_STOCK_QUANTITY));
         }
         players.forEach(p -> stockMarket.put(p, new ArrayList<>(initialStock)));
-        networth = players.stream().collect(Collectors.toMap(Function.identity(), p -> 0));
+        networth = players.stream().collect(Collectors.toMap(Function.identity(), p -> 0L));
     }
 
     private void givePlayersPrivateInfo(){
@@ -105,8 +105,11 @@ public class StockExchange extends RepeatedGame<Player> {
         updatePlayersStocks();
         List<Pair<Player, Offer>> currentOffers = getPlayerOffers();
         List<Offer> acceptedOffers = new ArrayList<>();
-
+        Collections.shuffle(players);
         for (Player player: players){
+            if (currentOffers.isEmpty()){
+                break;
+            }
             Pair<Player, Offer> accepted = giveOffers(player, new ArrayList<>(currentOffers));
             if (accepted == null){
                 continue;
