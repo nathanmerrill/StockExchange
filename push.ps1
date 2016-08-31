@@ -18,3 +18,4 @@ cp build/libs/StockExchange.jar StockExchange.jar
 git add .
 git commit -m "Updates"
 git push origin archives
+git checkout master
