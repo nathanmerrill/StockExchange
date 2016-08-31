@@ -17,11 +17,7 @@ public class Main {
     public final static String defaultSubmissionDirectory = "./submissions";
 
     public static void main(String[] args){
-        String directory = defaultSubmissionDirectory;
-        if (args.length > 1){
-            directory = args[1];
-        }
-        SubmissionFileManager fileManager = new SubmissionFileManager(new File(directory));
+        SubmissionFileManager fileManager = new SubmissionFileManager(new File(defaultSubmissionDirectory));
         if (args.length > 0){
             if (args[0].equals("download")){
                 download(fileManager);

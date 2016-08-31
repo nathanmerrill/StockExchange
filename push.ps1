@@ -4,8 +4,8 @@ git commit -m "Updates"
 git push origin HEAD:master
 cd ../
 git checkout master
-java -jar build/libs/StockExchange.jar   download compile
-rm StockExchange.jar
+gradle build
+java -jar build/libs/StockExchange.jar download compile
 git add .
 git commit -m "Updates"
 git push origin master
