@@ -23,11 +23,19 @@ public class Main {
         }
         SubmissionFileManager fileManager = new SubmissionFileManager(new File(directory));
         if (args.length > 0){
-            if (args[0].equals("download")){
-                download(fileManager);
-            }
-            if (args[0].equals("run")){
-                run(fileManager);
+            for (String arg: args) {
+                if (arg.equals("download")) {
+                    download(fileManager);
+                }
+                if (arg.equals("run")) {
+                    run(fileManager);
+                }
+                if (arg.equals("runJava")) {
+                    runJava(fileManager);
+                }
+                if (arg.equals("compile")) {
+                    compile(fileManager);
+                }
             }
         } else {
             System.out.println("No command given, executing 'run' by default");
@@ -39,13 +47,25 @@ public class Main {
         downloader.downloadQuestions();
     }
 
-    @SuppressWarnings("Convert2MethodRef")
-    private static void run(SubmissionFileManager fileManager){
+    private static List<PlayerType<Player>> compile(SubmissionFileManager fileManager){
         FileReader reader = new FileReader(fileManager);
-        List<PlayerType<Player>> players = reader.registerAllSubmissions(Player.class, PipeBot::new);
+        return reader.registerAllSubmissions(Player.class, PipeBot::new);
+    }
+
+    private static void runJava(SubmissionFileManager fileManager){
+        FileReader reader = new FileReader(fileManager);
+        run(reader.registerJavaFiles(Player.class));
+    }
+
+    private static void run(List<PlayerType<Player>> players){
         GameManager<Player> manager = new GameManager<>(StockExchange::new);
         manager.register(players);
         TournamentRunner<Player> runner = new TournamentRunner<>(new SimilarScoreProvider<>(manager, 25), () -> new EloScoreboard<>());
         System.out.println(runner.run(50).scoreTable());
+    }
+
+    @SuppressWarnings("Convert2MethodRef")
+    private static void run(SubmissionFileManager fileManager){
+        run(compile(fileManager));
     }
 }
