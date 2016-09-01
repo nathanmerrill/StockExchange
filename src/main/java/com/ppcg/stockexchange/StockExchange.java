@@ -3,6 +3,7 @@ package com.ppcg.stockexchange;
 import com.ppcg.kothcomm.game.RepeatedGame;
 import com.ppcg.kothcomm.game.scoreboards.AggregateScoreboard;
 import com.ppcg.kothcomm.utils.Pair;
+import com.ppcg.kothcomm.utils.Tools;
 
 import java.util.*;
 import java.util.function.Function;
@@ -77,12 +78,32 @@ public class StockExchange extends RepeatedGame<Player> {
     private List<Pair<Player, Offer>> getPlayerOffers(){
         return players.stream()
                 .map(Pair.fromValue(p -> p.makeOffer(new ArrayList<>(stockMarket.get(p)))))
+                .filter(this::validOffer)
                 .filter(p -> p.second() != null)
                 .filter(p -> canPay(p.first(), p.second().getOffer()))
                 .collect(Collectors.toList());
     }
 
+    private boolean validOffer(Pair<Player, Offer> pair){
+        Offer offer = pair.second();
+        if (offer == null){
+            return false;
+        }
+        if (offer.getOffer() == null){
+            System.err.println(pair.first().getName()+" returned an offer with a null stock");
+            return false;
+        }
+        if (!Tools.inRange(offer.getOffer().getType(), 0, players.size())){
+            System.err.println(pair.first().getName()+" returned an stock with an invalid type:"+offer.getOffer().getType());
+            return false;
+        }
+        return true;
+    }
+
     private boolean canPay(Player player, Stock stock){
+        if (stock.getType() < 0 || stock.getType() >= players.size()){
+
+        }
         return stock.getAmount() <= stockMarket.get(player).get(stock.getType()).getAmount();
     }
 
@@ -137,9 +158,8 @@ public class StockExchange extends RepeatedGame<Player> {
         networth.put(accepter, networth.get(accepter)-offer.getPayment());
 
         List<Stock> offererStock = stockMarket.get(offerer);
-        offererStock.set(stockType, accepterStock.get(stockType).minus(offer.getOffer()));
+        offererStock.set(stockType, offererStock.get(stockType).minus(offer.getOffer()));
         networth.put(offerer, networth.get(offerer)+offer.getPayment());
     }
-
 }
 
