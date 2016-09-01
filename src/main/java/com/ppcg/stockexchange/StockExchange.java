@@ -106,6 +106,7 @@ public class StockExchange extends RepeatedGame<Player> {
         List<Pair<Player, Offer>> currentOffers = getPlayerOffers();
         List<Offer> acceptedOffers = new ArrayList<>();
         Collections.shuffle(players);
+        Collections.shuffle(currentOffers);
         for (Player player: players){
             if (currentOffers.isEmpty()){
                 break;
