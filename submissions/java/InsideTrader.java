@@ -2,9 +2,7 @@ import java.util.List;
 
 import com.ppcg.stockexchange.*;
 
-
-
-public class InsideTrader extends EveryPlayer {
+public class InsideTrader extends Player {
     public String coverStory = "I can tell the good companies from the bad ones.";
     private String theTruth = "I'm cheating. (but so is everyone else)";
     private String ambitions = "Learn to \"follow the market\"";  // don't steal this idea
@@ -13,7 +11,7 @@ public class InsideTrader extends EveryPlayer {
 
     private int appraiseOffer(Offer offer) {
         /* get how much the offer is worth, 0 if it's not the secret stock */
-        if (offer.getOffer().getType() != secretStock) {
+        if (offer.getOffer().getType() != secretStock ||offer.getOffer().getAmount() == 0) {
             return 0;
         }
         return (offer.getPayment()/offer.getOffer().getAmount())  // price per stock...
@@ -46,11 +44,4 @@ public class InsideTrader extends EveryPlayer {
     public void acceptedOffers(List<Offer> acceptedOffers) {
 
     }
-}
-private class UnethicalPlayer extends Player {
-
-}
-
-private class EveryPlayer extends UnethicalPlayer {
-
 }

@@ -11,12 +11,13 @@ import com.ppcg.kothcomm.loader.FileReader;
 import com.ppcg.kothcomm.loader.SubmissionFileManager;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
 public class Main {
     public final static String defaultSubmissionDirectory = "./submissions";
 
-    public static void main(String[] args){
+    public static void main(String[] args) throws IOException{
         SubmissionFileManager fileManager = new SubmissionFileManager(new File(defaultSubmissionDirectory));
         if (args.length > 0){
             for (String arg: args) {
@@ -57,7 +58,7 @@ public class Main {
         GameManager<Player> manager = new GameManager<>(StockExchange::new);
         manager.register(players);
         TournamentRunner<Player> runner = new TournamentRunner<>(new SimilarScoreProvider<>(manager, 25), () -> new EloScoreboard<>());
-        System.out.println(runner.run(50).scoreTable());
+        System.out.println(runner.run(50, System.out).scoreTable());
     }
 
     @SuppressWarnings("Convert2MethodRef")
